@@ -28,36 +28,35 @@ new Product(addProduct).save()
     })
 })
 
-router.get('/viewProduct', function (req, res) {
-    Product.find({})
-    .populate("categoryId")
-    .then((response)=>{
-        res.status("200").json(response)   
-    }).catch((err)=>{
-        console.log(err);
-    })
-})
-
-//router.get('/viewProduct', function(req, res, next) {
-//     var perPage = 9
-//     var page = req.params.page || 1
-
-//     Product
-//         .find({})
-//         .skip((perPage * page) - perPage)
-//         .limit(perPage)
-//         .exec(function(err, products) {
-//             Product.count().exec(function(err, count) {
-//                 if (err) return next(err)
-//                 res.render('/viewProduct', {
-//                     products: products,
-//                     current: page,
-//                     pages: Math.ceil(count / perPage)
-//                 })
-//             })
-//         })
+// router.get('/viewProduct', function (req, res) {
+//     Product.find({})
+//     .populate("categoryId").skip(1).limit(9)
+//     .then((response)=>{
+//         res.status("200").json(response)   
+//     }).catch((err)=>{
+//         console.log(err);
+//     })
 // })
-
+router.get('/viewProduct', function (req, res) {
+        var pageNo = parseInt(req.query.pageNo)
+        var size = parseInt(req.query.size)
+        var query = {}
+        if(pageNo < 0 || pageNo === 0) {
+              response = {"error" : true,"message" : "invalid page number, should start with 1"};
+              return res.json(response)
+        }
+        query.skip = size * (pageNo - 1)
+        query.limit = size
+        // // Find some documents
+        Product.find({},{},query)
+            .populate("categoryId")
+            .then((response)=>{
+                res.status("200").json(response)   
+            }).catch((err)=>{
+                console.log(err);
+            })
+              });
+   
 router.get('/deleteProduct/:id',(req,res)=>{
     Product.deleteOne({_id:req.params.id})
     .then((response)=>{

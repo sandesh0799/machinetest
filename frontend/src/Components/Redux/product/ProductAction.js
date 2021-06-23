@@ -24,7 +24,7 @@ export const onAddProduct=(data)=>{
 export const onFetchProduct=()=>{
     return (dispatch)=>{
         dispatch(onFetching);
-        axios.get('http://localhost:5000/viewProduct')
+        axios.get('http://localhost:5000/viewProduct?pageNo=1&size=10')
         .then(res=>{
             if(res.status==200){
                 dispatch(onFetchSuccess(res.data));
